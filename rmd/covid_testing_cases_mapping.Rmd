@@ -128,4 +128,6 @@ df4 %>% filter(!(code %in% c("N0","N15","N24"))) %>% tm_shape()+tm_polygons(c("c
 ```
 
 
+From the graphs above, it looks like covid rates and covid testing have no major relationship in the DC area. Further analysis with other variables will be taken as a class. 
+
 
