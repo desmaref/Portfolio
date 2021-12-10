@@ -1,0 +1,96 @@
+---
+title: "Bikeshare Analysis"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+The purpose of this document is to analyze the populatity of bikes to predict when bikes are likely used and when they are not. 
+
+### Load Packages
+
+The following packages are used:
+
+tidyverse- Mutate Data
+
+lubridate- Minipulate Dates
+
+reshape2- stack data
+
+```{r}
+library(tidyverse)
+library(reshape2)
+library(lubridate)
+library(janitor)
+library(here)
+```
+
+### Load Data
+
+The selected data is Bikeshare data from Washington D.C. during September 2021. The data is pulled from the capital bikeshare website at https://www.capitalbikeshare.com/system-data.
+
+```{r}
+df1 <- read_csv(here("data","202109-capitalbikeshare-tripdata.csv"))%>%
+  clean_names
+```
+### Filter for first Date
+
+Doing analysis for the first date only, the data is filtered to just events that occurred on September first.
+
+
+```{r}
+df2<- filter(df1,day(started_at)==1, day(ended_at)==1)
+```
+
+### Mutate data to get continous sum
+
+Next, the data must mutated into a data frame which contains a continous count of bikes being ridden at a specif time during the day
+
+
+```{r}
+df2 <- select(df2, ride_id,started_at,ended_at )
+
+df2 <- melt(df2,id.var = c('ride_id'),variable.name="ride")
+
+
+df2 <- mutate(df2,counter= case_when
+              (ride =="ended_at" ~ -1, ride== "started_at"~1)) %>%
+  arrange(value)%>%
+   mutate(bikes_out = cumsum(counter))
+
+
+```
+
+### Graph data
+
+A visualization of the bikes ridden on the first day of the month is shown below
+
+
+```{r}
+ggplot(data=df2, aes(x=value, y=bikes_out)) +
+    geom_point(colour="black", stat="identity")+xlab("Time")+ ylab("# of Bikes currently rented")+labs(title = "# of bikes over time in the first day of September")
+```
+
+
+
+### in class exercise
+```{r}
+df4= df1 %>% 
+  select(rideable_type,start=started_at,end=ended_at)%>%
+  pivot_longer(cols=start:end,names_to="type",values_to="time")%>%
+  arrange(time)%>%
+  mutate(inc=case_when(
+    type == "start" ~ 1,
+    type == "end" ~ -1
+  ))%>%
+  mutate(riders= cumsum(inc))
+```
+
+can we plot over the entire month 
+```{r}
+df4 %>% 
+  mutate(day=day(time))%>%
+  ggplot(aes(time,riders))+geom_point(size=.5, alpha=.02)+facet_wrap(~day,ncol=7, scales="free_x")
+```
+

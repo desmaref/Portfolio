@@ -1,0 +1,54 @@
+---
+title: "Coronavirus Deaths Per State"
+author: "Ethan Desmarais"
+date: "9/24/2021"
+output:
+  html_document:
+    df_print: paged
+---
+The purpose of this document is to determine differences in the successes of states in mitigating the spread of COVID-19. As there was a time where testing was limited, this document will investigate deaths due to COVID-19 instead of positive cases. This allows for the negation of the potential problem that some states were able to test before others.The data was received from the the CDC data website found at https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36.
+
+In order to analyze the data, the following package was used:
+
+  - tidyverse- for mutating data and visualizations
+
+```{r load-packages, warning=FALSE, message=FALSE}
+library(here)
+
+us.states <- read.csv(here("data","United_States_COVID-19_Cases_and_Deaths_by_State_over_Time.csv"))
+library(tidyverse)
+
+```
+
+
+
+
+In order to compare the deaths in individual states, 10 states were selected and data was graphed from these respective states. The states of interest are Florida, New York, New Jersey, Massachusetts, Connecticut, Texas, California, Washington, Idaho and Illinois
+
+```{r select-countries}
+
+states <- c("FL", "NY", "CT", "MA", "NJ", "CA", "WA", "IL", "ID","TX","NYC")
+
+
+states_data <- us.states %>%
+  # filter for states of interest
+  filter(state %in% states) %>%
+ #states_data$submission_date<- as.Date(states_data$submission_date,"%m/%d/%Y") #make dates data type Date
+  mutate(submission_date=as.Date(submission_date,"%m/%d/%Y"))
+
+```
+
+
+The data was graphed according to date, beginning on the 21st of January 2020 and ending on the 23st of September 2021. In doing so we got the following results:
+
+```{r}
+ggplot(data = states_data) +
+  geom_line ( mapping = aes(x = submission_date,y = new_death, color = state))+ 
+  labs(title = "Daily Deaths per state due to Coronavirus")+
+  xlab("Date")+
+  ylab("Deaths")
+```
+
+*New York and New York City are separate due to differences in public health jurisdictions reporting
+
+I believe that this data needs further analysis as certain questions are unanswered. I question which state has the highest daily deaths when adjusted for population. In the graph above, California, Florida, and Texas have the highest deaths per day, but they also have the highest populations. In order to make a better analysis, population must be taken into account. 

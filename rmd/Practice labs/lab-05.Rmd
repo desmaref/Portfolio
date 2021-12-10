@@ -1,0 +1,212 @@
+---
+title: "Lab 04 - La Quinta is Spanish for next to Denny's, Pt. 2"
+author: "Ethan Desmarais"
+date: "2021-10-15"
+output:
+  html_document:
+    df_print: paged
+---
+
+### Load packages and data
+
+```{r load-packages, message = FALSE}
+library(tidyverse) 
+library(dsbox) 
+library(here)
+```
+
+```{r load-data, message = FALSE}
+states <- read_csv(here("data","states.csv"))
+```
+
+### Exercise 1
+
+Filter the Denny’s dataframe for Alaska (AK) and save the result as dn_ak. How many Denny’s locations are there in Alaska?
+```{r}
+dn_ak <- dennys %>%
+  filter(state == "AK")
+nrow(dn_ak)
+```
+There are 3 Denny's.
+
+### Exercise 2
+
+Filter the La Quinta dataframe for Alaska (AK) and save the result as lq_ak. How many La Quinta locations are there in Alaska?
+```{r}
+lq_ak <- laquinta %>%
+  filter(state == "AK")
+nrow(lq_ak)
+```
+There are 2 La Quintas.
+
+### Exercise 3
+
+How many pairings are there between all Denny’s and all La Quinta locations in Alaska, i.e. how many distances do we need to calculate between the locations of these establishments in Alaska?
+
+
+There are 6 pairings that we need to calculate.
+
+
+```{r}
+dn_lq_ak <- full_join(dn_ak, lq_ak, by = "state")
+dn_lq_ak
+```
+
+### Exercise 4
+
+How many observations are in the joined dn_lq_ak data frame? What are the names of the variables in this data frame.
+```{r}
+ncol(dn_lq_ak)
+nrow(dn_lq_ak)
+```
+
+There are 6 observations. The variables are address, city, state, zipcode, latitude, longitude for both Denny's and La Quinta
+
+
+### Exercise 5
+
+What function from the tidyverse do we use the add a new variable to a data frame while keeping the existing variables?
+
+
+We use the mutate function. 
+
+```{r}
+haversine <- function(long1, lat1, long2, lat2, round = 3) {
+  # convert to radians
+  long1 = long1 * pi / 180
+  lat1  = lat1  * pi / 180
+  long2 = long2 * pi / 180
+  lat2  = lat2  * pi / 180
+  
+  R = 6371 # Earth mean radius in km
+  
+  a = sin((lat2 - lat1)/2)^2 + cos(lat1) * cos(lat2) * sin((long2 - long1)/2)^2
+  d = R * 2 * asin(sqrt(a))
+  
+  return( round(d,round) ) # distance in km
+}
+```
+
+### Exercise 6
+
+
+Calculate the distances between all pairs of Denny’s and La Quinta locations and save this variable as distance. Make sure to save this variable in THE dn_lq_ak data frame so that you can use it later.
+
+```{r}
+dn_lq_ak <-mutate(dn_lq_ak,distance=haversine(longitude.x, latitude.x,longitude.y,latitude.y))
+```
+
+
+### Exercise 7
+
+
+Calculate the minimum distance between a Denny’s and La Quinta for each Denny’s location. To do so we group by Denny’s locations and calculate a new variable that stores the information for the minimum distance.
+
+
+```{r}
+dn_lq_ak_mindist <- dn_lq_ak %>%
+  group_by(address.x) %>%
+  summarise(closest = min(distance))
+```
+
+### Exercise 8
+
+Describe the distribution of the distances Denny’s and the nearest La Quinta locations in Alaska. Also include an appripriate visualization and relevant summary statistics.
+
+```{r}
+summary(dn_lq_ak_mindist)
+ggplot(dn_lq_ak_mindist, aes(x=closest))+geom_histogram(binwidth=1)+labs(title= "Distribution of the distance between La Quinta and Denny's", subtitle="State of Alaska")
+```
+
+
+Each Denny's has a La Quinta within 5 miles of itself
+
+### Exercise 9
+
+Repeat the same analysis for North Carolina: (i) filter Denny’s and La Quinta Data Frames for NC, (ii) join these data frames to get a completelist of all possible pairings, (iii) calculate the distances between all possible pairings of Denny’s and La Quinta in NC, (iv) find the minimum distance between each Denny’s and La Quinta location, (v) visualize and describe the distribution of these shortest distances using appropriate summary statistics.
+
+
+```{r}
+dn_nc <- dennys %>%
+  filter(state == "NC")
+lq_nc <- laquinta %>%
+  filter(state == "NC")
+dn_lq_nc <- full_join(dn_nc, lq_nc, by = "state")
+dn_lq_nc <-mutate(dn_lq_nc,distance=haversine(longitude.x, latitude.x,longitude.y,latitude.y))
+dn_lq_nc_mindist <- dn_lq_nc %>%
+  group_by(address.x) %>%
+  summarise(closest = min(distance))
+summary(dn_lq_nc_mindist)
+ggplot(dn_lq_nc_mindist, aes(x=closest))+geom_histogram(binwidth=25)+labs(title= "Distribution of the distance between La Quinta and Denny's", subtitle="State of North Carolina")
+```
+
+
+### Exercise 10
+
+Repeat the same analysis for Texas.
+
+```{r}
+dn_tx <- dennys %>%
+  filter(state == "TX")
+lq_tx <- laquinta %>%
+  filter(state == "TX")
+dn_lq_tx <- full_join(dn_tx, lq_tx, by = "state")
+dn_lq_tx <-mutate(dn_lq_tx,distance=haversine(longitude.x, latitude.x,longitude.y,latitude.y))
+dn_lq_tx_mindist <- dn_lq_tx %>%
+  group_by(address.x) %>%
+  summarise(closest = min(distance))
+summary(dn_lq_tx_mindist)
+
+ggplot(dn_lq_tx_mindist, aes(x=closest))+geom_histogram(binwidth=5)+labs(title= "Distribution of the distance between La Quinta and Denny's", subtitle="State of Texas")
+```
+
+### Exercise 11
+
+Repeat the same analysis for a state of your choosing, different than the ones we covered so far.
+
+```{r}
+dn_nh <- dennys %>%
+  filter(state == "NH")
+lq_nh <- laquinta %>%
+  filter(state == "NH")
+dn_lq_nh <- full_join(dn_nh, lq_nh, by = "state")
+dn_lq_nh <-mutate(dn_lq_nh,distance=haversine(longitude.x, latitude.x,longitude.y,latitude.y))
+dn_lq_nh_mindist <- dn_lq_nh %>%
+  group_by(address.x) %>%
+  summarise(closest = min(distance))
+summary(dn_lq_nh_mindist)
+ggplot(dn_lq_nh_mindist, aes(x=closest))+geom_histogram(binwidth=10)+labs(title= "Distribution of the distance between La Quinta and Denny's", subtitle="State of New Hampshire")
+```
+
+
+### Exercise 12
+
+Among the states you examined, where is Mitch Hedberg’s joke most likely to hold true? Explain your reasoning.
+
+In Texas and Alaska, the joke is most likely true, as most of the La Quintas and Denny's are have a small distance between them, although there are a few exceptions in Texas. Overall though, these distributions show that there is commonly a La Quintas near the Denny's. In New Hampshire and North Carolina, the joke does not hold as there are large distances between the 2 businesses in these states.
+
+
+A function to analyze data for each state is written below. It outputs a minimum distance table with the Denny's address and the distance to the closest La Quinta 
+```{r}
+analyze <- function(state_abrv){
+  dn<-dennys %>%
+  filter(state == state_abrv)
+ lq<-laquinta %>%
+  filter(state == state_abrv)
+dn_lq <- full_join(dn, lq, by = "state")
+dn_lq <-mutate(dn_lq,distance=haversine(longitude.x, latitude.x,longitude.y,latitude.y))
+dn_lq_mindist<- dn_lq %>%
+  group_by(address.x) %>%
+  summarise(closest = min(distance))
+return(dn_lq_mindist)
+
+
+}
+```
+
+
+Testing function with texas:
+```{r}
+analyze("TX")
+```
+

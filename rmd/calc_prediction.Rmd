@@ -1,0 +1,91 @@
+---
+title: "Predicting Calculus 2 Enrollment for Spring 2022"
+author: "Ethan Desmarais"
+output:
+  html_document:
+    df_print: paged
+---
+The purpose of this document is to predict how many students will enroll in Calculus 2 in the spring using the provided data set. 
+The following packages are used:
+   
+    Tidyverse: used to mutate and visualize data
+    Janitor: used to clean data
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(here)
+```
+Loading data from moodle into R:
+```{r message=FALSE, warning=FALSE}
+df1 <- read_csv(here("data","CU_ACAD_DEPT_WHEN_OFF_ENRL_22740.csv"),
+                skip = 1) %>% clean_names()
+
+```
+The data is manipulated to get find the number of strudents in each calculus discussion in each respective semester: 
+```{r message=FALSE, warning=FALSE}
+df2 <-select(df1,course_id:catalog,term_8,tot_enrl,component)%>%
+  filter(subject=="MA", catalog == 131 | catalog == 132,component =="LEC")%>%
+  group_by(catalog,term_8)%>%
+  summarize(tot_enrl=sum(tot_enrl) )%>%
+  ungroup() %>%
+ spread(key=catalog%%term_8, tot_enrl)
+
+
+
+```
+Next the data is separated spring and fall terms:
+
+
+```{r}
+df3<- separate(df2,term_8,c("season", "year"))%>%
+  filter(season != "Summer")%>%    #Summer enrollment is not a significant factor in Calculus 2 enrollment and is to be removed
+  mutate(year=as.numeric(year))%>%
+    mutate(year=case_when(season=="Fall" ~ paste(as.character(year),"-", as.character(year+1)), TRUE~paste(as.character(year-1),"-",as.character(year))))%>%
+  clean_names()
+```
+
+Next remove data which is not relevant to our analysis. This consists of anyone taking Calculus 1 or 2 on off semesters(calculus 1 in the spring or calculus 2 in the fall).
+```{r}
+  df4<-mutate(df3,x131=case_when(season=="Fall"~ x131))%>%
+  mutate(x132=case_when(season== "Spring"~ x132))
+```
+ 
+ 
+To line up columns of data according to year:
+```{r message=FALSE, warning=FALSE}
+ df5<- mutate_at(df4,c("x132"),funs(lead),n=8)%>%  #shifts Spring data upward 8 spots so it lines up with fall data 
+  filter(season== "Fall")%>%                    #removes NA values now left in Spring data 
+  select(year,"calculus1_fall"=x131,"calculus2_spring"=x132)%>%  #removes fall column
+  #point for 2021-2022 is inaccurate due to a lack of spring 2022 calc 2 data. The following code fixes this.
+  filter(year!="2021 - 2022")     
+```
+
+To make a prediction for 2022 spring calculus 2, linear regression is used to represent the data
+
+```{r}
+fit1<-lm(calculus2_spring~calculus1_fall,data=df5)
+summary(fit1)
+  
+```
+
+A visual representation of the data, and regression line is shown below. 
+
+```{r}
+ggplot(data = df5,mapping = aes(x = calculus1_fall, y = calculus2_spring))+
+  geom_point()+
+  stat_smooth(method="lm",col="red")+
+  geom_vline(xintercept=457)+ #line to represent current enrollment in Calculus 1
+  labs(
+    x = "Fall Calculus 1",
+    y = "Spring Calculus 2",
+    title = "Number of students in Calculus 1 in the Fall vs Calculus 2 in the Spring")
+  
+```
+
+Substituting the 457 students currently in calculus to the regression formula, an approximation for the number of students expected to enroll in Calculus 2 can be made. 
+
+```{r}
+0.9751*457-57.5478
+```
+
