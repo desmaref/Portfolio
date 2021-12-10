@@ -45,20 +45,27 @@ df3<- separate(df2,term_8,c("season", "year"))%>%
   clean_names()
 ```
 
-Next remove data which is not relevant to our analysis. This consists of anyone taking Calculus 1 or 2 on off semesters(calculus 1 in the spring or calculus 2 in the fall).
+<!-- Next remove data which is not relevant to our analysis. This consists of anyone taking Calculus 1 or 2 on off semesters(calculus 1 in the spring or calculus 2 in the fall). -->
+<!-- ```{r} -->
+<!--   df4<-mutate(df3,x131=case_when(season=="Fall"~ x131))%>% -->
+<!--   mutate(x132=case_when(season== "Spring"~ x132)) -->
+<!-- ``` -->
+
+
+<!-- To line up columns of data according to year: -->
+<!-- ```{r message=FALSE, warning=FALSE} -->
+<!--  df5<- mutate_at(df4,c("x132"),funs(lead),n=8)%>%  #shifts Spring data upward 8 spots so it lines up with fall data  -->
+<!--   filter(season== "Fall")%>%                    #removes NA values now left in Spring data  -->
+<!--   select(year,"calculus1_fall"=x131,"calculus2_spring"=x132)%>%  #removes fall column -->
+<!--   #point for 2021-2022 is inaccurate due to a lack of spring 2022 calc 2 data. The following code fixes this. -->
+<!--   filter(year!="2021 - 2022")      -->
+<!-- ``` -->
+
+A better way to do the above code:
 ```{r}
-  df4<-mutate(df3,x131=case_when(season=="Fall"~ x131))%>%
-  mutate(x132=case_when(season== "Spring"~ x132))
-```
- 
- 
-To line up columns of data according to year:
-```{r message=FALSE, warning=FALSE}
- df5<- mutate_at(df4,c("x132"),funs(lead),n=8)%>%  #shifts Spring data upward 8 spots so it lines up with fall data 
-  filter(season== "Fall")%>%                    #removes NA values now left in Spring data 
-  select(year,"calculus1_fall"=x131,"calculus2_spring"=x132)%>%  #removes fall column
-  #point for 2021-2022 is inaccurate due to a lack of spring 2022 calc 2 data. The following code fixes this.
-  filter(year!="2021 - 2022")     
+df5 <- df3%>%
+  pivot_wider(year, names_from=season, values_from = c(x131,x132))%>%
+  select(year,"calculus1_fall" = x131_Fall,"calculus2_spring"=x132_Spring) 
 ```
 
 To make a prediction for 2022 spring calculus 2, linear regression is used to represent the data

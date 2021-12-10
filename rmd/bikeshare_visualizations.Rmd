@@ -49,12 +49,10 @@ Next, the data must mutated into a data frame which contains a continous count o
 
 
 ```{r}
-df2 <- select(df2, ride_id,started_at,ended_at )
-
-df2 <- melt(df2,id.var = c('ride_id'),variable.name="ride")
-
-
-df2 <- mutate(df2,counter= case_when
+df2 <- select(df2, ride_id,started_at,ended_at ) %>%
+#df2 <- melt(df2,id.var = c('ride_id'),variable.name="ride")
+ pivot_longer(cols= started_at:ended_at,names_to = "ride", values_to = "value") %>% 
+ mutate(counter= case_when
               (ride =="ended_at" ~ -1, ride== "started_at"~1)) %>%
   arrange(value)%>%
    mutate(bikes_out = cumsum(counter))
