@@ -1,5 +1,5 @@
 ## Portfolio 
-#Ethan Desmarais
+Ethan Desmarais
 
 This repository currently hold rmd files from DS 241
 
