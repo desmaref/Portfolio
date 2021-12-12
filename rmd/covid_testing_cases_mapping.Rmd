@@ -130,4 +130,4 @@ df4 %>% filter(!(code %in% c("N0","N15","N24"))) %>% tm_shape()+tm_polygons(c("c
 
 From the graphs above, it looks like covid rates and covid testing have no major relationship in the DC area. Further analysis with other variables will be taken as a class. 
 
-
+Reflection: This was our side of the final project. We found it easy to join our data with the neighborhoods data, as both data sets have the same neighborhoods. We figured this would be useless without adjusting for population. We then brought it the census data and compared covid test to covid cases. The maps we generated show that it is unlikely that they are strongly related. This document practiced manipulation and visualization skills, while developing the overall model as a class with multiple conditions from many data sets shows more of an overall data science process, as we are individually finding data, cleaning it and joining it. We will then bring it all together and build a model to interpret the data and hopefully draw some conclusions.

@@ -92,3 +92,7 @@ df4 %>%
   ggplot(aes(time,riders))+geom_point(size=.5, alpha=.02)+facet_wrap(~day,ncol=7, scales="free_x")
 ```
 
+
+
+Reflection: This document allowed me to practice not only graphing but additionally some dplyr functions. More importantly, it allowed me to review more difficult functions such as pivot longer. In the visualizations, I was able to practice working with facets.
+

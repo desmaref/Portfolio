@@ -166,4 +166,7 @@ ggplot(t_dennys, aes(x=closest)) +geom_histogram(binwidth = 10)+ labs(title = "D
 
 ```
 
-In these cases, the joke that La Quinta is close to Denny's seems to hold as the Denny's are much closer to the La Quintas than the other restaurant. This does not mean that the joke holds in every location though and with every restaurant. Further analysis has to be done with many more restaurants and states to see if the joke still holds. 
+In these cases, the joke that La Quinta is close to Denny's seems to hold as the Denny's are much closer to the La Quintas than the other restaurant. This does not mean that the joke holds in every location though and with every restaurant. Further analysis has to be done with many more restaurants and states to see if the joke still holds.
+
+
+Reflection: This is another good example of the the basics of everything we did in class. We were provided the data, so no searching was necessary. We then cleaned the data, and made it into something we found useful by joining the La Quinta and Denny's data sets. We then created some visualizations and through these visualizations were able to say something about the proximity of La Quintas and Denny's by comparing the proximity to other fast food restaurants.

@@ -125,4 +125,7 @@ ggplot(data = cgg3$geometry, )+geom_sf(data=us_states$geometry)+geom_sf(aes(fill
 
 As you can see currently, not all of DC is filled in. When making the joins, we ended up dropping some of the points as they were not in all of our data sets. Further research and adding locations by hand will be needed to make this data more complete.
 
-Update: a better data set and method of mapping were introduced to the class, will not pursue this further and instead will use class meathod. 
+Update: a better data set and method of mapping were introduced to the class, will not pursue this further and instead will use class meathod.
+
+
+Reflection: This code was my attempt to figure out if our covid data could be graphed. I was unaware of a data set linking covid cases to neighborhoods, so tried to manually find data that would match up. As you can see,I failed to do this but still learned important skills pertaining to mapping and finding data.

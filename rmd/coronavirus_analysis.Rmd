@@ -52,3 +52,6 @@ ggplot(data = states_data) +
 *New York and New York City are separate due to differences in public health jurisdictions reporting
 
 I believe that this data needs further analysis as certain questions are unanswered. I question which state has the highest daily deaths when adjusted for population. In the graph above, California, Florida, and Texas have the highest deaths per day, but they also have the highest populations. In order to make a better analysis, population must be taken into account. 
+
+
+Reflection: This file provided practice cleaning data and then creating visualizations of that data. While it is relatively simplistic, it was some of the first R code we practiced in class.

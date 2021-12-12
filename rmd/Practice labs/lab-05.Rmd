@@ -210,3 +210,4 @@ Testing function with texas:
 analyze("TX")
 ```
 
+Reflection: In this lab, I practiced basic skills in R such as creating a function and basic graphing skills. This lab was important as it first came across as sufficient analysis, but after further discussion in class,we realized we must compare Denny's to other fast food restaurants as we were not sure how to define close. 

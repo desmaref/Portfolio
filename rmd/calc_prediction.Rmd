@@ -96,3 +96,4 @@ Substituting the 457 students currently in calculus to the regression formula, a
 0.9751*457-57.5478
 ```
 
+Reflection: This was probably the first time in class we were tasked with question and were able to apply a data science process. We started by finding data (which was provided to us). Then we were tasked to clean the data, which was a difficult task. I recently rewrote some of the lines of this code as they were coded in a way which was uninterpretable compared to the dplyr commands. Next, we were tasked to do explore analysis, exploring which factors could affect the outcome. We did this in class, and therefore much of it does not show up on the document. Finally, we were able to create a model and use that model to make a prediction of next years outcome.

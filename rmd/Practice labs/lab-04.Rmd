@@ -215,3 +215,6 @@ ggplot(dn_lq1, mapping = aes(x = longitude, y = latitude, color = establishment)
 ```
 
 While not all locations of La Quinta have a Denny's next to them, the joke seems to hold better in Texas than it does in North Carolina. That being said, there are many more La Quintas than there are Denny's.
+
+
+Reflection: This lab practiced basic mapping skills and data manipulation. Obviously, these are vary basic compared to what I am able to do now, but it was an important part of developing my skills.
